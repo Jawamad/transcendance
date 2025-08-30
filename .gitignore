@@ -1,0 +1,2 @@
+# Vault secrets (HashiCorp Vault module, replacing .env)
+infra/vault/seed.sh
