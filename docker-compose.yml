@@ -1,0 +1,16 @@
+services:
+  backend:
+    build:
+      context: .
+      dockerfile: infra/docker/backend/Dockerfile
+    container_name: backend
+    ports:
+      - "3000:3000"
+    volumes:
+      - ./backend/src:/app/backend/src
+      - ./backend/data:/app/backend/data
+    environment:
+      - NODE_ENV=development
+
+volumes:
+  backend_data:

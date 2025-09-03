@@ -1,0 +1,23 @@
+{
+  "name": "backend",
+  "version": "1.0.0",
+  "description": "",
+  "author": "",
+  "license": "ISC",
+  "type": "module",
+  "scripts": {
+    "build": "tsc",
+    "start": "node dist/main.js",
+    "dev": "tsx src/main.ts --no-watch"
+  },
+  "dependencies": {
+    "fastify": "^5.5.0",
+    "sqlite": "^5.1.1",
+    "sqlite3": "^5.1.7",
+    "pino-pretty": "^10.3.0"
+  },
+  "devDependencies": {
+    "tsx": "^3.12.7",
+    "typescript": "^5.9.2"
+  }
+}
