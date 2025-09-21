@@ -1,4 +1,10 @@
 services:
+  waf:
+    image: owasp/modsecurity-crs:nginx-alpine
+    container_name: waf
+    ports:
+      - "8080:80"   # ton site sera dispo sur http://localhost:8080
+    restart: always
   backend:
     build:
       context: .
