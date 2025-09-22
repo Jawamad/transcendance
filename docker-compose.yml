@@ -7,9 +7,14 @@ services:
       - "8080:80"   # ton site sera dispo sur http://localhost:8080
     restart: always
     volumes:
-    - ./infra/reverse-proxy/nginx.conf:/etc/nginx/nginx.conf:ro
-    - ./infra/reverse-proxy/modesecurity.conf:/etc/nginx/modsecurity.conf:ro
-    - ./infra/reverse-proxy/certs:/etc/ssl/certs:ro
+    # ton fichier reverse-proxy Nginx (Solution A : conf.d)
+    # - ./infra/reverse-proxy/default.conf:/etc/nginx/conf.d/default.conf
+
+    # ton fichier de config ModSecurity
+    - ./infra/reverse-proxy/modsecurity.conf:/etc/nginx/modsecurity.conf
+
+    # certificats SSL
+    - ./infra/reverse-proxy/certs:/etc/ssl/certs
     depends_on:
     - backend
 
