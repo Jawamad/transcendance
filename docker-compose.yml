@@ -10,7 +10,7 @@ services:
     restart: always
     volumes:
     # ton fichier reverse-proxy Nginx (Solution A : conf.d)
-     - ./infra/reverse-proxy/custom.conf:/etc/nginx/conf.d/custom.conf
+    - ./infra/reverse-proxy/custom.conf:/etc/nginx/conf.d/custom.conf
 
     # ton fichier de config ModSecurity
     # - ./infra/reverse-proxy/modsecurity.conf:/etc/nginx/modsecurity.conf
