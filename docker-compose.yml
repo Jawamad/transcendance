@@ -6,7 +6,7 @@ services:
     image: owasp/modsecurity-crs:nginx-alpine
     container_name: waf
     ports:
-      - "8080:8080"   # ton site sera dispo sur http://localhost:8080
+      - "80:80"   # ton site sera dispo sur http://localhost:8080
     restart: always
     volumes:
     # ton fichier reverse-proxy Nginx (Solution A : conf.d)
