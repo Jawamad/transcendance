@@ -1,13 +1,28 @@
 services:
+  # le service WAF
   waf:
+    networks:
+      - app_network
     image: owasp/modsecurity-crs:nginx-alpine
     container_name: waf
     ports:
-      - "8080:80"
+      - "80:80"   # ton site sera dispo sur http://localhost:8080
     restart: always
+    volumes:
+    # ton fichier reverse-proxy Nginx (Solution A : conf.d)
+    - ./infra/reverse-proxy/custom.conf:/etc/nginx/conf.d/custom.conf
+
+    # ton fichier de config ModSecurity
+    # - ./infra/reverse-proxy/modsecurity.conf:/etc/nginx/modsecurity.conf
+
+    # certificats SSL
+    # - ./infra/reverse-proxy/certs:/etc/ssl/certs
+    depends_on:
+    - backend
+
+  backend:
     networks:
       - app_network
-  backend:
     build:
       context: .
       dockerfile: infra/docker/backend/Dockerfile
