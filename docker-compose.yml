@@ -1,5 +1,4 @@
 services:
-  # le service WAF
   waf:
     networks:
       - app_network
@@ -11,6 +10,9 @@ services:
     volumes:
     # ton fichier reverse-proxy Nginx (Solution A : conf.d)
     - ./infra/reverse-proxy/custom.conf:/etc/nginx/conf.d/custom.conf
+
+     # Dossier frontend buildé
+    - ./frontend/dist:/usr/share/nginx/html
 
     # ton fichier de config ModSecurity
     # - ./infra/reverse-proxy/modsecurity.conf:/etc/nginx/modsecurity.conf
@@ -25,15 +27,30 @@ services:
       - app_network
     build:
       context: .
-      dockerfile: infra/docker/backend/Dockerfile
+      dockerfile: infra/backend/Dockerfile
     container_name: backend
     ports:
       - "3000:3000"
-    volumes:
-      - ./backend/src:/app/backend/src
-      - ./backend/data:/app/backend/data
     environment:
-      - NODE_ENV=development
+      - NODE_ENV=production
+  # Ne pas monter ./backend/src en prod pour éviter d'écraser dist/
+
+
+  frontend:
+    build:
+      context: .
+      dockerfile: infra/frontend/Dockerfile
+    container_name: frontend
+    # Pas de port exposé, c'est un build
+    environment:
+      - NODE_ENV=production
+    # On ne lance pas de serveur, juste un build
+    command: npm run build
+    volumes:
+      # Permet de récupérer le build dans ./frontend/dist pour que waf serve les fichiers
+      - ./frontend/dist:/app/frontend/dist
+
+
   vault:
     image: hashicorp/vault:latest
     container_name: vault
