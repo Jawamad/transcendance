@@ -6,17 +6,21 @@ WORKDIR /app/backend
 RUN apk add --no-cache python3 make g++ bash
 
 # Copier package.json et installer deps
-COPY ../../backend/package*.json ./
+COPY ./infra/backend/conf/package*.json ./
 RUN npm install -g pino-pretty
 RUN npm install
+
+# Copier tsconfig + code source
+COPY ./infra/backend/conf/tsconfig.json ./
+COPY ./backend/src ./src
+
+# Compiler TS → JS
+RUN npx tsc
 
 # Créer dossier pour DB
 RUN mkdir -p ./data
 
-# Copier le code TS
-COPY ../../backend/src ./src
-COPY ../../backend/tsconfig.json ./
-
 EXPOSE 3000
 
-CMD ["npx", "tsx", "src/main.ts"]
+# Lancer le JS compilé
+CMD ["node", "dist/main.js"]
