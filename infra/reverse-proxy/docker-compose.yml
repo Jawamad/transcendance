@@ -35,7 +35,6 @@ services:
       - NODE_ENV=production
   # Ne pas monter ./backend/src en prod pour éviter d'écraser dist/
 
-
   frontend:
     build:
       context: .
@@ -70,13 +69,16 @@ services:
         driver: bridge
 
   blockchain:
-    image: node:18
-    container_name: hardhat_node
-    working_dir: /app
+    image: node:18-alpine
+    container_name: blockchain
+    working_dir: /app 
     volumes:
-      - .:/app
+      - ./infra/blockchain:/app
     ports:
       - "8545:8545"
     command: sh -c "npm install && npx hardhat node"
-
+    networks:
+      - app_network
+    
+    
 
