@@ -17,10 +17,5 @@ COPY ./backend/src ./src
 # Compiler TS → JS
 RUN npx tsc
 
-# Créer dossier pour DB
-RUN mkdir -p ./data
-
-EXPOSE 3000
-
 # Lancer le JS compilé
 CMD ["node", "dist/main.js"]

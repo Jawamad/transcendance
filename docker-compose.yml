@@ -5,22 +5,38 @@ services:
     image: owasp/modsecurity-crs:nginx-alpine
     container_name: waf
     ports:
-      - "80:80"   # ton site sera dispo sur http://localhost:8080
+      - "80:80"
     restart: always
     volumes:
-    # ton fichier reverse-proxy Nginx (Solution A : conf.d)
+    # fichier reverse-proxy Nginx
     - ./infra/reverse-proxy/custom.conf:/etc/nginx/conf.d/custom.conf
 
      # Dossier frontend buildé
     - ./frontend/dist:/usr/share/nginx/html
 
-    # ton fichier de config ModSecurity
+    #fichier de config ModSecurity
     - ./infra/reverse-proxy/modsecurity.conf:/etc/nginx/modsecurity.conf
 
     # certificats SSL
     # - ./infra/reverse-proxy/certs:/etc/ssl/certs
     depends_on:
     - backend
+
+  dbwriter:
+    build:
+      context: ./infra/dbwriter
+      dockerfile: Dockerfile
+    container_name: dbwriter
+    environment:
+      - NODE_ENV=production
+      - DATABASE_URL=file:/app/data/database.sqlite
+    volumes:
+      - sqlite_data:/app/data
+    networks:
+      - app_network
+    # ports:
+    #  - "4000:4000" # test
+
 
   backend:
     networks:
@@ -31,23 +47,21 @@ services:
     container_name: backend
     ports:
       - "3000:3000"
+    volumes:
+      - sqlite_data:/app/data:ro 
     environment:
       - NODE_ENV=production
-  # Ne pas monter ./backend/src en prod pour éviter d'écraser dist/
-
+      - DATABASE_URL=file:/app/data/database.sqlite
 
   frontend:
     build:
       context: .
       dockerfile: infra/frontend/Dockerfile
     container_name: frontend
-    # Pas de port exposé, c'est un build
     environment:
       - NODE_ENV=production
-    # On ne lance pas de serveur, juste un build
     command: npm run build
     volumes:
-      # Permet de récupérer le build dans ./frontend/dist pour que waf serve les fichiers
       - ./frontend/dist:/app/frontend/dist
 
 
@@ -64,8 +78,10 @@ services:
     restart: always
     networks:
       - app_network
+
 volumes:
-  backend_data:
+  sqlite_data:
+
 networks:
   app_network:
     driver: bridge
