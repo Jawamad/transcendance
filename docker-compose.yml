@@ -45,8 +45,8 @@ services:
       context: .
       dockerfile: infra/backend/Dockerfile
     container_name: backend
-    ports:
-      - "3000:3000"
+    # ports:
+    #   - "3000:3000"
     volumes:
       - sqlite_data:/app/data:ro 
     environment:
@@ -68,8 +68,8 @@ services:
   vault:
     image: hashicorp/vault:latest
     container_name: vault
-    ports:
-      - "8200:8200"
+    # ports:
+    #   - "8200:8200"
     cap_add:
       - IPC_LOCK
     environment:

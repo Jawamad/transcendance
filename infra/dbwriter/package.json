@@ -1,7 +1,7 @@
 {
   "name": "dbwriter",
   "version": "1.0.0",
-  "description": "Service interne d’écriture SQLite (TypeScript)",
+  "description": "dbwriter",
   "main": "dist/index.js",
   "scripts": {
     "build": "tsc -p tsconfig.json",

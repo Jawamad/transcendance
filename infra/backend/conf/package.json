@@ -1,7 +1,7 @@
 {
   "name": "backend",
   "version": "1.0.0",
-  "description": "Backend TypeScript pour Transcendence",
+  "description": "Backend TypeScript",
   "main": "dist/main.js",
   "type": "commonjs",
   "scripts": {
