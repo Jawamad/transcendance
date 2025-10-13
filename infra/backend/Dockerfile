@@ -1,21 +1,48 @@
-FROM node:20-alpine
+# Étape 1 : Build stage (compilation TypeScript)
+FROM node:20-alpine AS builder
 
-WORKDIR /app/backend
+# Installer outils nécessaires pour compiler les dépendances natives
+RUN apk add --no-cache python3 make g++
 
-# Dépendances système pour SQLite
-RUN apk add --no-cache python3 make g++ bash
+WORKDIR /app
 
-# Copier package.json et installer deps
-COPY ./infra/backend/conf/package*.json ./
-RUN npm install -g pino-pretty
-RUN npm install
+# Copier fichiers de dépendances
+COPY ./infra/backend/package*.json ./
+COPY ./infra/backend/tsconfig.json ./
 
-# Copier tsconfig + code source
-COPY ./infra/backend/conf/tsconfig.json ./
+# Installer toutes les dépendances (y compris dev)
+RUN npm ci
+
+# Copier le code source
 COPY ./backend/src ./src
 
-# Compiler TS → JS
+# Compiler TypeScript → JavaScript (dist/)
 RUN npx tsc
 
-# Lancer le JS compilé
+# Étape 2 : Runtime (production)
+FROM node:20-alpine AS runner
+
+WORKDIR /app
+
+# Copier uniquement les fichiers nécessaires
+COPY ./infra/backend/package*.json ./
+
+# Installer uniquement les dépendances runtime
+RUN npm ci --omit=dev
+
+# Copier le code compilé depuis le builder
+COPY --from=builder /app/dist ./dist
+
+# Créer le dossier pour la base SQLite (monté en volume)
+RUN mkdir -p /app/data
+
+# Variables d’environnement
+ENV NODE_ENV=production
+ENV PORT=3000
+ENV DATABASE_URL=file:/app/data/database.sqlite
+
+# Exposer le port
+EXPOSE 3000
+
+# Lancer l’application
 CMD ["node", "dist/main.js"]
