@@ -9,13 +9,13 @@ services:
     restart: always
     volumes:
     # fichier reverse-proxy Nginx
-    - ./infra/reverse-proxy/custom.conf:/etc/nginx/conf.d/custom.conf
+    - ./reverse-proxy/custom.conf:/etc/nginx/conf.d/custom.conf
 
      # Dossier frontend buildé
     - ./frontend/dist:/usr/share/nginx/html
 
     #fichier de config ModSecurity
-    - ./infra/reverse-proxy/modsecurity.conf:/etc/nginx/modsecurity.conf
+    - ./reverse-proxy/modsecurity.conf:/etc/nginx/modsecurity.conf
 
     # certificats SSL
     # - ./infra/reverse-proxy/certs:/etc/ssl/certs
@@ -24,7 +24,7 @@ services:
 
   dbwriter:
     build:
-      context: ./infra/dbwriter
+      context: ./dbwriter
       dockerfile: Dockerfile
     container_name: dbwriter
     environment:
@@ -43,8 +43,8 @@ services:
     networks:
       - app_network
     build:
-      context: .
-      dockerfile: infra/backend/Dockerfile
+      context: ./backend
+      dockerfile: Dockerfile
     container_name: backend
     # ports:
     #   - "3000:3000"
@@ -57,14 +57,15 @@ services:
 
   frontend:
     build:
-      context: .
-      dockerfile: infra/frontend/Dockerfile
+      context: ./frontend
+      dockerfile: Dockerfile
     container_name: frontend
     environment:
       - NODE_ENV=production
     command: npm run build
     volumes:
       - ./frontend/dist:/app/frontend/dist
+
 
 
   vault:
@@ -75,7 +76,7 @@ services:
     environment:
       - VAULT_ADDR=http://0.0.0.0:8200
     volumes:
-      - ./infra/vault/config.hcl:/vault/config/config.hcl
+      - ./vault/config.hcl:/vault/config/config.hcl
       - vault_data:/vault/file
     command: vault server -config=/vault/config/config.hcl
     restart: always

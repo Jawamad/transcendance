@@ -7,14 +7,14 @@ RUN apk add --no-cache python3 make g++
 WORKDIR /app
 
 # Copier fichiers de dépendances
-COPY ./infra/backend/package*.json ./
-COPY ./infra/backend/tsconfig.json ./
+COPY package*.json ./
+COPY tsconfig.json ./
 
 # Installer toutes les dépendances (y compris dev)
 RUN npm ci
 
 # Copier le code source
-COPY ./backend/src ./src
+COPY src ./src
 
 # Compiler TypeScript → JavaScript (dist/)
 RUN npx tsc
@@ -25,7 +25,7 @@ FROM node:20-alpine AS runner
 WORKDIR /app
 
 # Copier uniquement les fichiers nécessaires
-COPY ./infra/backend/package*.json ./
+COPY package*.json ./
 
 # Installer uniquement les dépendances runtime
 RUN npm ci --omit=dev
