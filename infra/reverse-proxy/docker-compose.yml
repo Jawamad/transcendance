@@ -69,16 +69,38 @@ services:
         driver: bridge
 
   blockchain:
-    image: node:18-alpine
+    image: node:20-alpine
+    build:
+      context: ./infra/blockchain
+      dockerfile: Dockerfile
     container_name: blockchain
-    working_dir: /app 
-    volumes:
-      - ./infra/blockchain:/app
     ports:
       - "8545:8545"
-    command: sh -c "npm install && npx hardhat node"
+    volumes:
+      - ./infra/blockchain:/app
     networks:
       - app_network
+    command: npx hardhat node
+
+
+  # hardhat_node:
+  #   build: .
+  #   volumes:
+  #     - .:/app
+  #   working_dir: /app
+  #   command: npx hardhat node
+
+  # blockchain:
+  #   image: node:20-alpine
+  #   container_name: blockchain
+  #   working_dir: /app 
+  #   volumes:
+  #     - ./infra/blockchain:/app
+  #   ports:
+  #     - "8545:8545"
+  #   command: sh -c "npm install && npx hardhat node"
+  #   networks:
+  #     - app_network
     
     
 

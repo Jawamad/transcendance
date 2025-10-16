@@ -64,19 +64,38 @@ services:
     networks:
       - app_network
     volumes:
-      backend_data:
-    networks:
-      app_network:
-        driver: bridge
-
+      - backend_data:/vault/data  
+  
   blockchain:
-    image: node:18
-    container_name: hardhat_node
-    working_dir: /app
-    volumes:
-      - .:/app
+    build:
+      context: ./infra/blockchain
+      dockerfile: Dockerfile
+    container_name: blockchain
     ports:
       - "8545:8545"
-    command: sh -c "npm install && npx hardhat node"
+    networks:
+      - app_network
+    volumes:
+      - ./infra/blockchain:/app
+
+  # blockchain:
+  #   image: node:22-alpine
+  #   container_name: hardhat_node
+  #   working_dir: /app
+  #   volumes:
+  #     - ./infra/blockchain:/app
+  #   ports:
+  #     # port a enlever 
+  #     - "8545:8545"
+  #   command: sh -c "npm install --legacy-peer-deps && npx hardhat run scripts/deploy.js --network fuji"
+  #   networks:
+  #   - app_network
+
+volumes:
+  backend_data:
+
+networks:
+  app_network:
+    driver: bridge
 
 
