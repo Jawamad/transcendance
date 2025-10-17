@@ -1,17 +1,40 @@
-import * as dotenv from "dotenv";
-dotenv.config();
+import type { HardhatUserConfig } from "hardhat/config";
 
-import { HardhatUserConfig } from "hardhat/config";
-import "@nomicfoundation/hardhat-toolbox";
+import hardhatToolboxViemPlugin from "@nomicfoundation/hardhat-toolbox-viem";
+import { configVariable } from "hardhat/config";
 
 const config: HardhatUserConfig = {
-  solidity: "0.8.27",
+  plugins: [hardhatToolboxViemPlugin],
+  solidity: {
+    profiles: {
+      default: {
+        version: "0.8.28",
+      },
+      production: {
+        version: "0.8.28",
+        settings: {
+          optimizer: {
+            enabled: true,
+            runs: 200,
+          },
+        },
+      },
+    },
+  },
   networks: {
-    fuji: {
+    hardhatMainnet: {
+      type: "edr-simulated",
+      chainType: "l1",
+    },
+    hardhatOp: {
+      type: "edr-simulated",
+      chainType: "op",
+    },
+    sepolia: {
       type: "http",
-      url: "https://api.avax-test.network/ext/bc/C/rpc",
-      // a modifier par une clé dans vault
-      accounts: process.env.PRIVATE_KEY ? [process.env.PRIVATE_KEY] : [],
+      chainType: "l1",
+      url: configVariable("SEPOLIA_RPC_URL"),
+      accounts: [configVariable("SEPOLIA_PRIVATE_KEY")],
     },
   },
 };

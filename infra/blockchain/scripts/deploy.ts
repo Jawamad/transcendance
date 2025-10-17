@@ -1,20 +1,21 @@
 import { ethers } from "hardhat";
 
-async function main(): Promise<void> {
-  // On récupère le "factory" du smart contract
-  const ScoreStorage = await ethers.getContractFactory("ScoreStorage");
+async function main() {
+  // Récupère le "factory" (constructeur) du contrat
+  const MyContract = await ethers.getContractFactory("MyContract");
 
-  // On déploie le contrat
-  const scoreStorage = await ScoreStorage.deploy();
+  // Déploie le contrat (ajoute des arguments ici si ton constructeur en a)
+  const myContract = await MyContract.deploy();
 
-  // On attend que le déploiement soit terminé
-  await scoreStorage.deployed();
+  // Attend que le contrat soit déployé sur le réseau
+  await myContract.waitForDeployment();
 
-  console.log("ScoreStorage deployed to:", scoreStorage.address);
+  // Affiche l'adresse du contrat
+  console.log("✅ MyContract déployé à :", await myContract.getAddress());
 }
 
-// Gestion des erreurs
+// Lancement du script avec gestion d’erreur propre
 main().catch((error) => {
-  console.error(error);
+  console.error("❌ Erreur de déploiement :", error);
   process.exitCode = 1;
 });
