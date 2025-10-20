@@ -19,27 +19,27 @@ services:
 
     # certificats SSL
     # - ./infra/reverse-proxy/certs:/etc/ssl/certs
-    depends_on:
-    - api-gateway
+    # depends_on:
+    # - api-gateway
 
-  api-gateway:
-    abuild:
-      context: ./api-gateway
-      dockerfile: Dockerfile
-    container_name: api-gateway
-    networks:
-      - app_network
-    ports:
-      - "8080:8080"
-    environment:
-      - NODE_ENV=production
-      - AUTH_SERVICE_URL=http://authservice:4000
-      - BACKEND_URL=http://backend:3000
-      - FRONTEND_URL=http://frontend:80
-    depends_on:
-      - authservice
-      - backend
-    restart: always
+  # api-gateway:
+  #   build:
+  #     context: ./api-gateway
+  #     dockerfile: Dockerfile
+  #   container_name: api-gateway
+  #   networks:
+  #     - app_network
+  #   ports:
+  #     - "8080:8080"
+  #   environment:
+  #     - NODE_ENV=production
+  #     - AUTH_SERVICE_URL=http://authservice:4000
+  #     - BACKEND_URL=http://backend:3000
+  #     - FRONTEND_URL=http://frontend:80
+  #   depends_on:
+  #     - authservice
+  #     - backend
+  #   restart: always
 
   dbwriter:
     build:
