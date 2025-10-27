@@ -1,19 +1,18 @@
 # Utilise Node 20 pour ESM + Hardhat 3
 FROM node:22-alpine
 
-WORKDIR /app
+WORKDIR /app/content
 
 # Copier package.json et package-lock.json pour installer les dépendances
-COPY package*.json ./
+COPY package*.json /app/
 #RUN npm ci
-RUN npm install --legacy-peer-deps
-
-
+RUN npm ci --legacy-peer-deps
 
 # Copier le reste du code Hardhat
-COPY . .
+COPY ./content .
 
-#RUN npx hardhat compile
+# Compilation avec la version locale
+RUN /app/node_modules/.bin/hardhat compile
 
-# Lancer Hardhat directement (pas de tsx)
-CMD ["npx", "hardhat", "node"]
+# Lancer le node Hardhat
+CMD ["/app/node_modules/.bin/hardhat", "node"]
