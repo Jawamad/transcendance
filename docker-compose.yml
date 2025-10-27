@@ -76,7 +76,7 @@ services:
     networks:
       - app_network
     volumes:
-      - ./infra/blockchain:/app
+      - ./infra/blockchain/content:/app/content
 
   # blockchain:
   #   image: node:22-alpine
