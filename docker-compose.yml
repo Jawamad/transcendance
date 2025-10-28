@@ -76,8 +76,6 @@ services:
     volumes:
       - ./frontend/dist:/app/frontend/dist
 
-
-
   vault:
     image: hashicorp/vault:latest
     container_name: vault
@@ -92,33 +90,16 @@ services:
     restart: always
     networks:
       - app_network
-    volumes:
-      - backend_data:/vault/data  
   
   blockchain:
     build:
-      context: ./infra/blockchain
+      context: ./blockchain
       dockerfile: Dockerfile
     container_name: blockchain
-    ports:
-      - "8545:8545"
     networks:
       - app_network
     volumes:
-      - ./infra/blockchain/content:/app/content
-
-  # blockchain:
-  #   image: node:22-alpine
-  #   container_name: hardhat_node
-  #   working_dir: /app
-  #   volumes:
-  #     - ./infra/blockchain:/app
-  #   ports:
-  #     # port a enlever 
-  #     - "8545:8545"
-  #   command: sh -c "npm install --legacy-peer-deps && npx hardhat run scripts/deploy.js --network fuji"
-  #   networks:
-  #   - app_network
+      - ./blockchain/content:/app/content
 
 volumes:
   sqlite_data:
