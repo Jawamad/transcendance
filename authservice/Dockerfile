@@ -33,16 +33,16 @@ RUN npm ci --omit=dev
 # Copier le code compilé depuis le builder
 COPY --from=builder /app/dist ./dist
 
+ENV PORT=3000
+
+EXPOSE 3000
+
 # Créer le dossier pour la base SQLite (monté en volume)
 RUN mkdir -p /app/data
 
 # Variables d’environnement
 ENV NODE_ENV=production
-ENV PORT=3000
 ENV DATABASE_URL=file:/app/data/database.sqlite
-
-# Exposer le port
-EXPOSE 3000
 
 # Lancer l’application
 CMD ["node", "dist/main.js"]
