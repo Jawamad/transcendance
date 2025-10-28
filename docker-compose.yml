@@ -5,61 +5,90 @@ services:
     image: owasp/modsecurity-crs:nginx-alpine
     container_name: waf
     ports:
-      - "80:80"   # ton site sera dispo sur http://localhost:8080
+      - "80:80"
     restart: always
     volumes:
-    # ton fichier reverse-proxy Nginx (Solution A : conf.d)
-    - ./infra/reverse-proxy/custom.conf:/etc/nginx/conf.d/custom.conf
+    # fichier reverse-proxy Nginx
+    - ./reverse-proxy/custom.conf:/etc/nginx/conf.d/custom.conf
 
      # Dossier frontend buildé
     - ./frontend/dist:/usr/share/nginx/html
 
-    # ton fichier de config ModSecurity
-    - ./infra/reverse-proxy/modsecurity.conf:/etc/nginx/modsecurity.conf
+    #fichier de config ModSecurity
+    - ./reverse-proxy/modsecurity.conf:/etc/nginx/modsecurity.conf
 
     # certificats SSL
     # - ./infra/reverse-proxy/certs:/etc/ssl/certs
     depends_on:
-    - backend
+    - api-gateway
 
-  backend:
+  api-gateway:
+    build:
+      context: ./api-gateway
+      dockerfile: Dockerfile
+    container_name: api-gateway
+    networks:
+      - app_network
+    environment:
+      - NODE_ENV=production
+      - AUTH_SERVICE_URL=http://authservice:4000
+      - FRONTEND_URL=http://frontend:80
+    depends_on:
+      - authservice
+    restart: always
+
+  dbwriter:
+    build:
+      context: ./dbwriter
+      dockerfile: Dockerfile
+    container_name: dbwriter
+    environment:
+      - NODE_ENV=production
+      - DATABASE_URL=file:/app/data/database.sqlite
+    volumes:
+      - sqlite_data:/app/data
+    networks:
+      - app_network
+    restart: always
+
+  authservice:
     networks:
       - app_network
     build:
-      context: .
-      dockerfile: infra/backend/Dockerfile
-    container_name: backend
-    ports:
-      - "3000:3000"
+      context: ./authservice
+      dockerfile: Dockerfile
+    container_name: authservice
+    volumes:
+      - sqlite_data:/app/data:ro 
     environment:
       - NODE_ENV=production
-  # Ne pas monter ./backend/src en prod pour éviter d'écraser dist/
-
+      - DATABASE_URL=file:/app/data/database.sqlite
+    restart: always
 
   frontend:
     build:
-      context: .
-      dockerfile: infra/frontend/Dockerfile
+      context: ./frontend
+      dockerfile: Dockerfile
     container_name: frontend
-    # Pas de port exposé, c'est un build
     environment:
       - NODE_ENV=production
-    # On ne lance pas de serveur, juste un build
     command: npm run build
     volumes:
-      # Permet de récupérer le build dans ./frontend/dist pour que waf serve les fichiers
       - ./frontend/dist:/app/frontend/dist
+
+
 
   vault:
     image: hashicorp/vault:latest
     container_name: vault
-    ports:
-      - "8200:8200"
     cap_add:
       - IPC_LOCK
     environment:
-      VAULT_DEV_ROOT_TOKEN_ID: "root"
-    command: server -dev -dev-root-token-id="root"
+      - VAULT_ADDR=http://0.0.0.0:8200
+    volumes:
+      - ./vault/config.hcl:/vault/config/config.hcl
+      - vault_data:/vault/file
+    command: vault server -config=/vault/config/config.hcl
     restart: always
     networks:
       - app_network
@@ -92,7 +121,8 @@ services:
   #   - app_network
 
 volumes:
-  backend_data:
+  sqlite_data:
+  vault_data:
 
 networks:
   app_network:
