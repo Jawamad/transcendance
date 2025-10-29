@@ -84,3 +84,4 @@ $VAULT kv put secret/backend \
   SQLITE_ENCRYPTION_KEY="MaCleChiffrementSQLite123" || true
 
 echo "✅ Initialisation terminée."
+
