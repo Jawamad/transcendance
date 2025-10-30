@@ -88,6 +88,7 @@ services:
     volumes:
       - ./vault/config.hcl:/vault/config/config.hcl # ca fonctionne
       - vault_data:/vault/file
+      
       - ./vault/vault-init.sh:/vault/vault-init.sh
       - ./vault/vault-start.sh:/vault/vault-start.sh
     # command: sh -c "vault server -config=/vault/config/config.hcl & sleep 5 && sh /vault/vault-init.sh"
