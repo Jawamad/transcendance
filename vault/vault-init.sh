@@ -39,7 +39,8 @@ echo "$STATUS_JSON"
 # # 🛠 Initialisation si nécessaire
 # # ============================
 
-if ! $VAULT status -format=json 2>/dev/null | grep -q '"initialized":true'; then
+set -eo pipefail
+if $VAULT status -format=json 2>/dev/null | grep -q '"initialized":false'; then
   echo "🛠 Initialisation de Vault (1 clé)..."
   $VAULT operator init -key-shares=1 -key-threshold=1 > "$INIT_FILE"
 
