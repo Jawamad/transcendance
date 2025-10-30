@@ -123,11 +123,21 @@ echo "💾 Ajout de secrets initiaux..."
 
 echo "✅ Initialisation terminée."
 
-STATUS_JSON=$($VAULT status -format=json 2>/dev/null || true)
-echo " DEBUG : STATUS JSON="
-echo "$STATUS_JSON"
+SECRET_PATH="secret"
+MOUNTED=$($VAULT secrets list -format=json | grep "\"$SECRET_PATH/\"")
 
+if [ -z "$MOUNTED" ]; then
+  echo "🛠 activation du moteur KV v2 sur '$SECRET_PATH'..." 
+  vault secrets enable -path="$SECRET_PATH" -version=2 kv
+else  
+  echo " le moteur KV '$SECRET_PATH' est déjà activé"
+fi
+
+# vault secrets enable -path=secret kv-v2 
 # $VAULT kv put secret/database data.DATABASE_URL="file:/app/data/database.sqlite"
+
+vault secrets list
+
 
 
 
