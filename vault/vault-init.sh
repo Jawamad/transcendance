@@ -92,21 +92,21 @@ fi
 # # 🔐 Connexion Root
 # # ============================
 
-ROOT_TOKEN=$(cat "$ROOT_TOKEN_FILE" 2>/dev/null)
-if [ -n "$ROOT_TOKEN" ]; then
-  echo "🔑 Connexion avec le root token..."
-  $VAULT login "$ROOT_TOKEN" >/dev/null 2>&1
-else
-  echo "⚠️ Aucun root token disponible."
-fi
-
 # ROOT_TOKEN=$(cat "$ROOT_TOKEN_FILE" 2>/dev/null)
 # if [ -n "$ROOT_TOKEN" ]; then
-#   echo "🔑 Utilisation du root token..."
-#   export VAULT_TOKEN="$ROOT_TOKEN"
+#   echo "🔑 Connexion avec le root token..."
+#   $VAULT login "$ROOT_TOKEN" >/dev/null 2>&1
 # else
 #   echo "⚠️ Aucun root token disponible."
 # fi
+
+ROOT_TOKEN=$(cat "$ROOT_TOKEN_FILE" 2>/dev/null)
+if [ -n "$ROOT_TOKEN" ]; then
+  echo "🔑 Utilisation du root token..."
+  export VAULT_TOKEN="$ROOT_TOKEN"
+else
+  echo "⚠️ Aucun root token disponible."
+fi
 
 echo "TOKEN VAULT"
 echo $VAULT_TOKEN
@@ -123,9 +123,9 @@ echo "💾 Ajout de secrets initiaux..."
 
 echo "✅ Initialisation terminée."
 
-# STATUS_JSON=$($VAULT status -format=json 2>/dev/null || true)
-# echo " DEBUG : STATUS JSON="
-# echo "$STATUS_JSON"
+STATUS_JSON=$($VAULT status -format=json 2>/dev/null || true)
+echo " DEBUG : STATUS JSON="
+echo "$STATUS_JSON"
 
 # $VAULT kv put secret/database data.DATABASE_URL="file:/app/data/database.sqlite"
 
