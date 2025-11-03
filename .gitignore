@@ -59,3 +59,5 @@ frontend/node_modules/
 # ----------------------
 infra/reverse-proxy/ssl/
 
+# Vault secrets (HashiCorp Vault module, replacing .env)
+infra/vault/seed.sh
