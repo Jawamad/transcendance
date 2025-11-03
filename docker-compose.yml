@@ -86,7 +86,9 @@ services:
     volumes:
       - ./vault/config.hcl:/vault/config/config.hcl
       - vault_data:/vault/file
-    command: vault server -config=/vault/config/config.hcl
+      - ./vault/vault-init.sh:/vault/vault-init.sh
+      - ./vault/vault-start.sh:/vault/vault-start.sh
+    command: sh /vault/vault-start.sh 
     restart: always
     networks:
       - app_network
