@@ -13,11 +13,8 @@ export VAULT_ADDR=${VAULT_ADDR:-http://127.0.0.1:8200}
 
 INIT_FILE=/vault/init.txt
 UNSEAL_KEY_FILE=/vault/unseal.key
-<<<<<<< HEAD
 ROOT_TOKEN_FILE=/vault/root.token
-=======
 ROOT_TOKEN_FILE=/vault/root.tokenttt
->>>>>>> main
 
 echo "🚀 Script d’initialisation Vault lancé..."
 
@@ -102,25 +99,9 @@ echo $VAULT_TOKEN
 # # ============================
 
 echo "💾 Ajout de secrets initiaux..."
-<<<<<<< HEAD
-# $VAULT kv put secret/backend \
-#   JWT_SECRET="SuperSecretJWT" \
-#   DATABASE_URL="file:/app/data/database.sqlite" \
-#   SQLITE_ENCRYPTION_KEY="MaCleChiffrementSQLite123" || true
-=======
->>>>>>> main
-
 echo "✅ Initialisation terminée."
 
 SECRET_PATH="secret"
-<<<<<<< HEAD
-MOUNTED=$($VAULT secrets list -format=json | grep "\"$SECRET_PATH/\"")
-
-if [ -z "$MOUNTED" ]; then
-  echo "🛠 activation du moteur KV v2 sur '$SECRET_PATH'..." 
-  vault secrets enable -path="$SECRET_PATH" -version=2 kv
-=======
-echo "$SECRET_PATH"
 
 MOUNTED=$($VAULT secrets list -format=json | grep "\"$SECRET_PATH/\"" || true)
 echo "$MOUNTED"
@@ -128,19 +109,12 @@ echo "$MOUNTED"
 if [ -z "$MOUNTED" ]; then
   echo "🛠 activation du moteur KV v2 sur '$SECRET_PATH'..." 
   $VAULT secrets enable -path="$SECRET_PATH" -version=2 kv
->>>>>>> main
 else  
   echo " le moteur KV '$SECRET_PATH' est déjà activé"
 fi
 
-<<<<<<< HEAD
 # vault secrets enable -path=secret kv-v2 
 # $VAULT kv put secret/database data.DATABASE_URL="file:/app/data/database.sqlite"
 
 vault secrets list
 
-
-
-
-=======
->>>>>>> main
