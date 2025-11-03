@@ -114,6 +114,3 @@ else
   echo " le moteur KV '$SECRET_PATH' est déjà activé"
 fi
 
-$VAULT secrets list
-
-
