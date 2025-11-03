@@ -1,5 +1,4 @@
-#!/usr/bin/env sh
-# start-vault.sh
+#!/usr/bin/env bash
 set -e
 
 VAULT=${VAULT:-vault}
